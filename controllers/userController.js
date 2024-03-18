@@ -60,13 +60,23 @@ const login = async (req, res) => {
 
     const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.status(200).json({ token });
+    // Configurando o cookie para ser seguro e expirar em 1 hora
+    const cookieOptions = {
+        httpOnly: true,
+        secure: true, // Será enviado apenas em conexões HTTPS
+        maxAge: 3600000, // Tempo de expiração de 1 hora em milissegundos
+        sameSite: 'strict', // Restringindo o cookie para o mesmo site
+    };
+
+    // Define o cookie com o token JWT
+    res.cookie('token', token, cookieOptions).status(200).json({ token });
     logger.info(`Usuário fez login: ${username}`);
   } catch (error) {
     logger.error(`Erro no servidor: ${error}`);
     res.status(500).send('Erro no servidor');
   }
 };
+
 
 
 module.exports = {

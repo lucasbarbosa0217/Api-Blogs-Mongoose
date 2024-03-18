@@ -1,4 +1,3 @@
-// blogController.js
 const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const Blog = require('../models/Blog');
@@ -6,7 +5,7 @@ const logger = require('../utils/logger');
 
 const postBlog = async (req, res) => {
   try {
-    const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+    const token = req.cookies.token;
     if (!token) return res.status(401).json({ msg: 'Token não fornecido' });
 
     jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
