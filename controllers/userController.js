@@ -37,6 +37,8 @@ const register = async (req, res) => {
   }
 };
 
+
+
 const login = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -58,8 +60,6 @@ const login = async (req, res) => {
 
     const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.cookie('token', token, { httpOnly: true, maxAge:7200000, secure: true, signed: true});
-
     res.status(200).json({ token });
     logger.info(`Usuário fez login: ${username}`);
   } catch (error) {
@@ -67,6 +67,7 @@ const login = async (req, res) => {
     res.status(500).send('Erro no servidor');
   }
 };
+
 
 module.exports = {
   register,
