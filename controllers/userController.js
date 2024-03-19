@@ -68,8 +68,12 @@ const login = async (req, res) => {
         sameSite: 'strict', // Restringindo o cookie para o mesmo site
     };
 
+
+
+    
     // Define o cookie com o token JWT
     res.cookie('token', token, cookieOptions).status(200).json({ token });
+    
     logger.info(`Usuário fez login: ${username}`);
   } catch (error) {
     logger.error(`Erro no servidor: ${error}`);

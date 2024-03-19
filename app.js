@@ -12,14 +12,24 @@ const bodyParser = require('body-parser'); // Adicionando o body-parser
 
 const app = express();
 
+const csrf = require('csrf');
+const tokens = new csrf();
+
+app.use(cookieParser());
+
+app.use((req, res, next) => {
+    const secret = process.env.JWT_SECRET;
+    const token = tokens.create(secret);
+    res.cookie('XSRF-TOKEN', token);
+    next();
+});
+
 app.use(cors({
-    origin:['http://localhost:3000', `https://react-base-sage.vercel.app`, `https://react-base-qjep.onrender.com`], // Define a origem permitida (seu aplicativo React)
-    credentials: true, // Permite o envio de cookies e autenticação
+    origin:['*'],
+    credentials: true, 
 }));
 
 app.use(express.static(path.join(__dirname, 'build')));
-
-app.use(cookieParser());
 app.use(helmet());
 app.use(bodyParser.json());
 
@@ -27,7 +37,6 @@ connectDB();
 
 app.use('/api', apiRoutes);
 
-// Esta rota deve ser definida após as rotas da API
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
